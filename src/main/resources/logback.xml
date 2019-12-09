@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <Property name="log.base" value="./log/"/>
+    <jmxConfigurator/>
+    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%date [%thread] %-5level %logger{80}[%line] - %msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+
+    <!-- log for error -->
+    <property name="log.error" value="${log.base}MqPractice.error"/>
+    <appender name="errorAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+        <!--        <file>${log.error}.log</file>-->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <FileNamePattern>${log.error}.%d{yyyy-MM-dd}.%i.log</FileNamePattern>
+            <!-- each file should be at most 300MB, keep 60 days worth of history, but at most 20GB -->
+            <maxFileSize>300MB</maxFileSize>
+            <maxHistory>7</maxHistory>
+            <totalSizeCap>10GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date [%thread] %-5level %logger{80}[%line] - %msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter"><!-- 只打印错误日志 -->
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!-- RocketMQ -->
+    <appender name="RocketMQ" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${log.base}RocketMQ.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <!-- each file should be at most 300MB, keep 60 days worth of history, but at most 20GB -->
+            <maxFileSize>300MB</maxFileSize>
+            <maxHistory>4</maxHistory>
+            <totalSizeCap>3GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date [%thread] %-5level %logger{80}[%line] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="RocketMQ" level="debug">
+        <appender-ref ref="RocketMQ"/>
+    </logger>
+
+    <!-- Kafka -->
+    <appender name="Kafka" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${log.base}Kafka.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <!-- each file should be at most 300MB, keep 60 days worth of history, but at most 20GB -->
+            <maxFileSize>300MB</maxFileSize>
+            <maxHistory>4</maxHistory>
+            <totalSizeCap>3GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date [%thread] %-5level %logger{80}[%line] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="Kafka" level="debug">
+        <appender-ref ref="Kafka"/>
+    </logger>
+
+
+    <logger name="com.baidu.materialtest">
+        <level value="DEBUG"/>
+    </logger>
+    <root>
+        <level value="INFO"/>
+        <appender-ref ref="stdout"/>
+        <appender-ref ref="logfile"/>
+        <appender-ref ref="errorAppender"/>
+    </root>
+</configuration>
