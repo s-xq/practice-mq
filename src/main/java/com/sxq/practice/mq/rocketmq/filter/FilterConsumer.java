@@ -1,4 +1,4 @@
-package com.sxq.practice.mq.rocketmq.schedule;
+package com.sxq.practice.mq.rocketmq.filter;
 
 import java.util.List;
 
@@ -19,25 +19,22 @@ import com.sxq.practice.mq.rocketmq.RocketMQConstants;
  * Created by s-xq on 2019-12-10.
  */
 
-public class ScheduledMessageConsumer {
+public class FilterConsumer {
 
     private static final Logger logger = LoggerFactory.getLogger(Constants.LogName.ROCKET_MQ);
 
     public static void main(String[] args) throws MQClientException {
-        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer(
-                MqUtil.consumerGroupName(RocketMQConstants.ExampleModule.MODULE_SCHEDULE));
-        consumer.setNamesrvAddr(RocketMQConstants.NAME_SRV_ADDR);
-        consumer.subscribe(MqUtil.topicName(RocketMQConstants.ExampleModule.MODULE_SCHEDULE), "*");
-        consumer.registerMessageListener(new MessageListenerConcurrently() {
+        DefaultMQPushConsumer defaultMQPushConsumer = new DefaultMQPushConsumer(
+                MqUtil.consumerGroupName(RocketMQConstants.ExampleModule.MODULE_FILTER));
+        defaultMQPushConsumer.setNamesrvAddr(RocketMQConstants.NAME_SRV_ADDR);
+        defaultMQPushConsumer.registerMessageListener(new MessageListenerConcurrently() {
             @Override
             public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs, ConsumeConcurrentlyContext context) {
-                for (MessageExt messageExt : msgs) {
-                    logger.info("Receive new message [msgId={}], {} ms later", messageExt.getMsgId(),
-                            System.currentTimeMillis() - messageExt.getStoreTimestamp());
-                }
+                logger.info("Receive new message:{}", msgs);
                 return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
             }
         });
-        consumer.start();
+        defaultMQPushConsumer.start();
     }
+
 }

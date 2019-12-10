@@ -1,10 +1,11 @@
-package com.sxq.practice.mq.rocketmq.schedule;
+package com.sxq.practice.mq.rocketmq.filter;
 
 import java.io.UnsupportedEncodingException;
 
 import org.apache.rocketmq.client.exception.MQBrokerException;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
+import org.apache.rocketmq.client.producer.SendResult;
 import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.remoting.common.RemotingHelper;
 import org.apache.rocketmq.remoting.exception.RemotingException;
@@ -19,26 +20,23 @@ import com.sxq.practice.mq.rocketmq.RocketMQConstants;
  * Created by s-xq on 2019-12-10.
  */
 
-public class ScheduledMessageProducer {
-
+public class FilterProducer {
     private static final Logger logger = LoggerFactory.getLogger(Constants.LogName.ROCKET_MQ);
 
     public static void main(String[] args)
             throws MQClientException, UnsupportedEncodingException, RemotingException, InterruptedException,
             MQBrokerException {
         DefaultMQProducer producer = new DefaultMQProducer(
-                MqUtil.producerGroupName(RocketMQConstants.ExampleModule.MODULE_SCHEDULE));
+                MqUtil.producerGroupName(RocketMQConstants.ExampleModule.MODULE_FILTER));
         producer.setNamesrvAddr(RocketMQConstants.NAME_SRV_ADDR);
         producer.start();
-        int totalMessageToSend = 100;
-        for (int i = 0; i < totalMessageToSend; i++) {
-            Message message = new Message(MqUtil.topicName(RocketMQConstants.ExampleModule.MODULE_SCHEDULE),
-                    ("Hello scheduled message " + i).getBytes(RemotingHelper.DEFAULT_CHARSET));
-            /**
-             * This message will be delivered to consumer 10 seconds later
-             */
-            message.setDelayTimeLevel(3);
-            producer.send(message);
+        for (int i = 0; i < 100; i++) {
+            Message message = new Message(MqUtil.topicName(RocketMQConstants.ExampleModule.MODULE_FILTER),
+                    MqUtil.tagName(RocketMQConstants.ExampleModule.MODULE_FILTER),
+                    ("Hello world " + i).getBytes(RemotingHelper.DEFAULT_CHARSET));
+            message.putUserProperty("a", String.valueOf(i));
+            SendResult sendResult = producer.send(message);
+            logger.info("SendResult:[{}] {}", i, sendResult);
         }
         producer.shutdown();
     }

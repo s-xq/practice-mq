@@ -6,7 +6,6 @@ import java.util.List;
 import org.apache.rocketmq.client.exception.MQBrokerException;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
-import org.apache.rocketmq.client.producer.MQProducer;
 import org.apache.rocketmq.client.producer.MessageQueueSelector;
 import org.apache.rocketmq.client.producer.SendResult;
 import org.apache.rocketmq.common.message.Message;
@@ -31,8 +30,9 @@ public class OrderedProducer {
     public static void main(String[] args)
             throws InterruptedException, RemotingException, MQClientException, MQBrokerException,
             UnsupportedEncodingException {
-        MQProducer mqProducer = new DefaultMQProducer(
+        DefaultMQProducer mqProducer = new DefaultMQProducer(
                 MqUtil.producerGroupName(RocketMQConstants.ExampleModule.MODULE_ORDER));
+        mqProducer.setNamesrvAddr(RocketMQConstants.NAME_SRV_ADDR);
         mqProducer.start();
         String[] tags = MqUtil.multiTagsName(RocketMQConstants.ExampleModule.MODULE_ORDER);
         for (int i = 0; i < 100; i++) {

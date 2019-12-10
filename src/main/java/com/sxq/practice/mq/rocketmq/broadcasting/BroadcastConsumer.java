@@ -28,6 +28,7 @@ public class BroadcastConsumer {
     public static void main(String[] args) throws Exception {
         DefaultMQPushConsumer consumer =
                 new DefaultMQPushConsumer(MqUtil.consumerGroupName(RocketMQConstants.ExampleModule.MODULE_BROADCAST));
+        consumer.setNamesrvAddr(RocketMQConstants.NAME_SRV_ADDR);
         consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_FIRST_OFFSET);
         consumer.setMessageModel(MessageModel.BROADCASTING);
         String[] tags = MqUtil.multiTagsName(RocketMQConstants.ExampleModule.MODULE_BROADCAST);

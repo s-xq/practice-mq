@@ -29,6 +29,7 @@ public class OrderConsumer {
     public static void main(String[] args) throws MQClientException {
         DefaultMQPushConsumer consumer = new DefaultMQPushConsumer(
                 MqUtil.consumerGroupName(RocketMQConstants.ExampleModule.MODULE_ORDER));
+        consumer.setNamesrvAddr(RocketMQConstants.NAME_SRV_ADDR);
         consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_FIRST_OFFSET);
         String[] tags = MqUtil.multiTagsName(RocketMQConstants.ExampleModule.MODULE_ORDER);
         consumer.subscribe(MqUtil.topicName(RocketMQConstants.ExampleModule.MODULE_ORDER),

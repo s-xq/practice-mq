@@ -14,6 +14,7 @@ public class RocketMQConstants {
         public static final String MODULE_BROADCAST = "Broadcast";
         public static final String MODULE_SCHEDULE = "Schedule";
         public static final String MODULE_BATCH = "Batch";
+        public static final String MODULE_FILTER = "FILTER";
     }
 
 }

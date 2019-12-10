@@ -22,6 +22,7 @@ public class BroadcastProducer {
     public static void main(String[] args) throws Exception {
         DefaultMQProducer defaultMQProducer =
                 new DefaultMQProducer(MqUtil.producerGroupName(RocketMQConstants.ExampleModule.MODULE_BROADCAST));
+        defaultMQProducer.setNamesrvAddr(RocketMQConstants.NAME_SRV_ADDR);
         defaultMQProducer.start();
         for (int i = 0; i < 100; i++) {
             Message msg = new Message(MqUtil.topicName(RocketMQConstants.ExampleModule.MODULE_BROADCAST),

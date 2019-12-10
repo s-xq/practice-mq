@@ -26,6 +26,7 @@ public class BatchProducer {
     public static void main(String[] args) throws UnsupportedEncodingException {
         DefaultMQProducer defaultMQProducer = new DefaultMQProducer(
                 MqUtil.producerGroupName(RocketMQConstants.ExampleModule.MODULE_BATCH));
+        defaultMQProducer.setNamesrvAddr(RocketMQConstants.NAME_SRV_ADDR);
         List<Message> messageList = new ArrayList<>();
         String topic = MqUtil.topicName(RocketMQConstants.ExampleModule.MODULE_BATCH);
         for (int i = 0; i < 100; i++) {
