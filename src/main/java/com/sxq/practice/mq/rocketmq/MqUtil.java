@@ -6,7 +6,6 @@ package com.sxq.practice.mq.rocketmq;
 
 public class MqUtil {
 
-
     public static String producerGroupName(String exampleModuleName) {
         return "GroupNameTest-" + exampleModuleName;
     }
@@ -19,10 +18,17 @@ public class MqUtil {
         return "TagNameTest-" + exampleModuleName;
     }
 
+    public static String[] multiTagsName(String exampleModuleName) {
+        String[] result = new String[5];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = tagName(exampleModuleName) + "-" + i;
+        }
+        return result;
+    }
+
     public static String consumerGroupName(String exampleModuleName) {
         return "ConsumerGroupNameTest-" + exampleModuleName;
     }
-
 
     public static String keysName(String exampleModuleName) {
         return "KeysNameTest-" + exampleModuleName;
