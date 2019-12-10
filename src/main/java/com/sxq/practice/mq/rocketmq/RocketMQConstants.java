@@ -11,6 +11,7 @@ public class RocketMQConstants {
     public static class ExampleModule {
         public static final String MODULE_SIMPLE = "Simple";
         public static final String MODULE_ORDER = "Order";
+        public static final String MODULE_BROADCAST = "Broadcast";
     }
 
 }
