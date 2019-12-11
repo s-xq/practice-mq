@@ -33,7 +33,7 @@ public class OrderConsumer {
         consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_FIRST_OFFSET);
         String[] tags = MqUtil.multiTagsName(RocketMQConstants.ExampleModule.MODULE_ORDER);
         consumer.subscribe(MqUtil.topicName(RocketMQConstants.ExampleModule.MODULE_ORDER),
-                StringUtils.joinWith(" | ", tags));
+                StringUtils.joinWith(" || ", tags));
         consumer.registerMessageListener(new MessageListenerOrderly() {
             private AtomicLong consumeTime = new AtomicLong(0);
 
