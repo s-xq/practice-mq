@@ -47,7 +47,7 @@ public class TransactionProducer {
         transactionMQProducer.setTransactionListener(transactionListener);
         transactionMQProducer.start();
         String[] tags = MqUtil.multiTagsName(RocketMQConstants.ExampleModule.MODULE_TRANSACTION);
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 5; i++) {
             try {
                 Message msg = new Message(MqUtil.topicName(RocketMQConstants.ExampleModule.MODULE_TRANSACTION),
                         tags[i % tags.length], ("KEY" + i).getBytes(RemotingHelper.DEFAULT_CHARSET));
