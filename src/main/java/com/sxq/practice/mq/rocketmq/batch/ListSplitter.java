@@ -22,7 +22,7 @@ public class ListSplitter implements Iterator<List<Message>> {
 
     @Override
     public boolean hasNext() {
-        return curIndex <= messages.size();
+        return curIndex < messages.size();
     }
 
     @Override
