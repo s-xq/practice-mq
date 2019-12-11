@@ -30,7 +30,7 @@ public class FilterProducer {
                 MqUtil.producerGroupName(RocketMQConstants.ExampleModule.MODULE_FILTER));
         producer.setNamesrvAddr(RocketMQConstants.NAME_SRV_ADDR);
         producer.start();
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 10; i++) {
             Message message = new Message(MqUtil.topicName(RocketMQConstants.ExampleModule.MODULE_FILTER),
                     MqUtil.tagName(RocketMQConstants.ExampleModule.MODULE_FILTER),
                     ("Hello world " + i).getBytes(RemotingHelper.DEFAULT_CHARSET));

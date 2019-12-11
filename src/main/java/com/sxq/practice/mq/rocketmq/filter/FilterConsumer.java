@@ -3,6 +3,7 @@ package com.sxq.practice.mq.rocketmq.filter;
 import java.util.List;
 
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
+import org.apache.rocketmq.client.consumer.MessageSelector;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyContext;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
 import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently;
@@ -27,6 +28,12 @@ public class FilterConsumer {
         DefaultMQPushConsumer defaultMQPushConsumer = new DefaultMQPushConsumer(
                 MqUtil.consumerGroupName(RocketMQConstants.ExampleModule.MODULE_FILTER));
         defaultMQPushConsumer.setNamesrvAddr(RocketMQConstants.NAME_SRV_ADDR);
+        /**
+         * must update broker config:
+         * ./mqadmin updateBrokerConfig -n localhost:9876 -b 172.24.175.60:10911 -k enablePropertyFilter -v true
+         */
+        defaultMQPushConsumer.subscribe(MqUtil.topicName(RocketMQConstants.ExampleModule.MODULE_FILTER),
+                MessageSelector.bySql("a between 0 and 3"));
         defaultMQPushConsumer.registerMessageListener(new MessageListenerConcurrently() {
             @Override
             public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs, ConsumeConcurrentlyContext context) {
