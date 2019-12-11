@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.remoting.common.RemotingHelper;
@@ -23,10 +24,11 @@ public class BatchProducer {
 
     private static final Logger logger = LoggerFactory.getLogger(Constants.LogName.ROCKET_MQ);
 
-    public static void main(String[] args) throws UnsupportedEncodingException {
+    public static void main(String[] args) throws UnsupportedEncodingException, MQClientException {
         DefaultMQProducer defaultMQProducer = new DefaultMQProducer(
                 MqUtil.producerGroupName(RocketMQConstants.ExampleModule.MODULE_BATCH));
         defaultMQProducer.setNamesrvAddr(RocketMQConstants.NAME_SRV_ADDR);
+        defaultMQProducer.start();
         List<Message> messageList = new ArrayList<>();
         String topic = MqUtil.topicName(RocketMQConstants.ExampleModule.MODULE_BATCH);
         for (int i = 0; i < 100; i++) {
