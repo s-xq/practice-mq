@@ -24,9 +24,10 @@ public class BroadcastProducer {
                 new DefaultMQProducer(MqUtil.producerGroupName(RocketMQConstants.ExampleModule.MODULE_BROADCAST));
         defaultMQProducer.setNamesrvAddr(RocketMQConstants.NAME_SRV_ADDR);
         defaultMQProducer.start();
+        String[] tags = MqUtil.multiTagsName(RocketMQConstants.ExampleModule.MODULE_BROADCAST);
         for (int i = 0; i < 100; i++) {
             Message msg = new Message(MqUtil.topicName(RocketMQConstants.ExampleModule.MODULE_BROADCAST),
-                    MqUtil.tagName(RocketMQConstants.ExampleModule.MODULE_BROADCAST),
+                    tags[i % tags.length],
                     MqUtil.keysName(RocketMQConstants.ExampleModule.MODULE_BROADCAST),
                     "Hello world".getBytes(RemotingHelper.DEFAULT_CHARSET));
             SendResult sendResult = defaultMQProducer.send(msg);

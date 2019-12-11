@@ -32,8 +32,9 @@ public class BroadcastConsumer {
         consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_FIRST_OFFSET);
         consumer.setMessageModel(MessageModel.BROADCASTING);
         String[] tags = MqUtil.multiTagsName(RocketMQConstants.ExampleModule.MODULE_BROADCAST);
-        consumer.subscribe(MqUtil.topicName(RocketMQConstants.ExampleModule.MODULE_BROADCAST),
-                StringUtils.join(" | ", tags));
+        String tagsExpression = StringUtils.join(tags, " || ");
+        logger.info("tagsExpression:[{}]", tagsExpression);
+        consumer.subscribe(MqUtil.topicName(RocketMQConstants.ExampleModule.MODULE_BROADCAST), tagsExpression);
         consumer.registerMessageListener(new MessageListenerConcurrently() {
             @Override
             public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs, ConsumeConcurrentlyContext context) {
