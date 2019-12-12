@@ -21,7 +21,7 @@ public class SimpleProducer {
 
     public static void main(String[] args) {
         Properties properties = new Properties();
-        properties.put("bootstrap.servers", "localhost:9092");
+        properties.put("bootstrap.servers", KafkaConstants.BOOTSTRAP_SERVERS);
         properties.put("acks", "all");
         properties.put("key.serializer", StringSerializer.class.getCanonicalName());
         properties.put("value.serializer", StringSerializer.class.getCanonicalName());

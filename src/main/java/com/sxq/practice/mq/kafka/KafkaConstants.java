@@ -6,8 +6,12 @@ package com.sxq.practice.mq.kafka;
 
 public class KafkaConstants {
 
+    public static final String BOOTSTRAP_SERVERS = "localhost:9092";
+
     public static class ExampleModule {
         public static final String MODULE_SIMPLE = "Simple";
+        public static final String MODULE_IDEMPOTENCE = "Idempotence";
+        public static final String MODULE_TRANSACTIONAL = "Transactional";
 
     }
 
