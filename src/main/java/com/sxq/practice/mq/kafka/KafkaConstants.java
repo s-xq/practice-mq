@@ -12,6 +12,8 @@ public class KafkaConstants {
         public static final String MODULE_SIMPLE = "Simple";
         public static final String MODULE_IDEMPOTENCE = "Idempotence";
         public static final String MODULE_TRANSACTIONAL = "Transactional";
+        public static final String MODULE_AUTO_OFFSET_COMMIT = "AutoOffsetCommit";
+
 
     }
 

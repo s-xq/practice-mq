@@ -9,4 +9,8 @@ public class KafkaUtil {
     public static String topicName(String moduleName) {
         return "TopicNameTest-" + moduleName;
     }
+
+    public static String consumerGroupName(String moduleName) {
+        return "ConsumerGroupNameTest-" + moduleName;
+    }
 }
