@@ -9,9 +9,9 @@ import org.apache.kafka.common.PartitionInfo;
 
 /**
  * Created by s-xq on 2019-12-13.
+ * Usage: <code>kafkaProducerProperties.put("partitioner.class", {@link CustomProducerPartitioner})</code>
  */
-
-public class CustomPartitioner implements Partitioner {
+public class CustomProducerPartitioner implements Partitioner {
 
     @Override
     public int partition(String topic, Object key, byte[] keyBytes, Object value, byte[] valueBytes, Cluster cluster) {
