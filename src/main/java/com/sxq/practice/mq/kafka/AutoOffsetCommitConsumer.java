@@ -8,6 +8,7 @@ import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,8 +29,8 @@ public class AutoOffsetCommitConsumer {
         properties.put("group.id", KafkaUtil.consumerGroupName(KafkaConstants.ExampleModule.MODULE_AUTO_OFFSET_COMMIT));
         properties.put("enable.auto.commit", true);
         properties.put("auto.commit.interval.ms", 1000);
-        properties.put("key.serializer", StringSerializer.class.getCanonicalName());
-        properties.put("value.serializer", StringSerializer.class.getCanonicalName());
+        properties.put("key.deserializer", StringDeserializer.class.getCanonicalName());
+        properties.put("value.deserializer", StringDeserializer.class.getCanonicalName());
         Consumer<String, String> consumer = new KafkaConsumer(properties);
         consumer.subscribe(Arrays.asList(
                 KafkaUtil.topicName(KafkaConstants.ExampleModule.MODULE_SIMPLE),
