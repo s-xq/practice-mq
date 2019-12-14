@@ -1,6 +1,7 @@
-package com.sxq.practice.mq.kafka;
+package com.sxq.practice.mq.kafka.rebalance;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +21,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.sxq.practice.mq.Constants;
+import com.sxq.practice.mq.kafka.ConsumerRecordProcessor;
+import com.sxq.practice.mq.kafka.KafkaConstants;
+import com.sxq.practice.mq.kafka.KafkaUtil;
 
 /**
  * Created by s-xq on 2019-12-12.
@@ -43,10 +47,12 @@ public class HandleRebalanceConsumer extends Thread {
     }
 
     public static void main(String[] args) throws InterruptedException {
-        List<HandleRebalanceConsumer> consumers = Arrays.asList(new HandleRebalanceConsumer(),
-                new HandleRebalanceConsumer(), new HandleRebalanceConsumer());
-        for (HandleRebalanceConsumer consumer : consumers) {
-            consumer.start();
+
+        List<HandleRebalanceConsumer> consumers = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            HandleRebalanceConsumer handleRebalanceConsumer = new HandleRebalanceConsumer();
+            consumers.add(handleRebalanceConsumer);
+            handleRebalanceConsumer.start();
         }
         for (HandleRebalanceConsumer consumer : consumers) {
             try {

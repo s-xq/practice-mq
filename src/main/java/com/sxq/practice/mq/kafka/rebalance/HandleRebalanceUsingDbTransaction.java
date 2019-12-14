@@ -1,4 +1,4 @@
-package com.sxq.practice.mq.kafka;
+package com.sxq.practice.mq.kafka.rebalance;
 
 import java.util.Collection;
 
@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.sxq.practice.mq.Constants;
+import com.sxq.practice.mq.kafka.rebalance.DbModule;
 
 /**
  * Created by s-xq on 2019-12-14.

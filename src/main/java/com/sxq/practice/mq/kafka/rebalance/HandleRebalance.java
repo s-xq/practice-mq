@@ -1,4 +1,4 @@
-package com.sxq.practice.mq.kafka;
+package com.sxq.practice.mq.kafka.rebalance;
 
 import java.util.Collection;
 import java.util.HashMap;

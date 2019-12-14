@@ -1,4 +1,4 @@
-package com.sxq.practice.mq.kafka;
+package com.sxq.practice.mq.kafka.rebalance;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.TopicPartition;
