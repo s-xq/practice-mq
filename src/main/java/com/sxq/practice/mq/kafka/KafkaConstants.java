@@ -6,7 +6,7 @@ package com.sxq.practice.mq.kafka;
 
 public class KafkaConstants {
 
-    public static final String BOOTSTRAP_SERVERS = "localhost:9092";
+    public static final String BOOTSTRAP_SERVERS = "localhost:9093,localhost:9094";
 
     public static class ExampleModule {
         public static final String MODULE_SIMPLE = "Simple";
