@@ -67,7 +67,8 @@ public class HandleRebalanceUsingDbTransactionConsumer extends Thread {
     private void launchConsumer() {
         Properties properties = new Properties();
         properties.put("bootstrap.servers", KafkaConstants.BOOTSTRAP_SERVERS);
-        properties.put("group.id", KafkaUtil.consumerGroupName(KafkaConstants.ExampleModule.MODULE_HANDLE_REBALANCE));
+        properties.put("group.id", KafkaUtil.consumerGroupName(
+                KafkaConstants.ExampleModule.MODULE_HANDLE_REBALANCE_UNSING_DB_TRANSACTION));
         properties.put("key.deserializer", StringDeserializer.class.getCanonicalName());
         properties.put("value.deserializer", StringDeserializer.class.getCanonicalName());
         consumer = new KafkaConsumer(properties);

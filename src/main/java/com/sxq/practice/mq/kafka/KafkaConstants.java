@@ -14,7 +14,9 @@ public class KafkaConstants {
         public static final String MODULE_TRANSACTIONAL = "Transactional";
         public static final String MODULE_AUTO_OFFSET_COMMIT = "AutoOffsetCommitConsumer";
         public static final String MODULE_MANUAL_OFFSET_CONTROL = "ManualOffsetControlCommitConsumer";
-        public static final String MODULE_HANDLE_REBALANCE = "HandleRebalanceConsumer";
+        public static final String MODULE_HANDLE_REBALANCE = HandleRebalanceConsumer.class.getSimpleName();
+        public static final String MODULE_HANDLE_REBALANCE_UNSING_DB_TRANSACTION
+                = HandleRebalanceUsingDbTransaction.class.getSimpleName();
 
     }
 
