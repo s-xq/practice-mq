@@ -4,7 +4,6 @@ import java.util.Collection;
 
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRebalanceListener;
-import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.TopicPartition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,13 +29,15 @@ public class HandleRebalanceUsingDbTransaction implements ConsumerRebalanceListe
         /**
          * commit offset to db before partition reassigned
          */
-        logger.info("Lost partitions in rebalance. Committing offsets into db.");
+        logger.info("partitions will be rebalanced. Committing offsets into db, current assign partition:[{}]",
+                consumer.assignment());
         DbModule.commitDbTransaction();
     }
 
     @Override
     public void onPartitionsAssigned(Collection<TopicPartition> partitions) {
-        logger.info("partition assigned, begin to consume message.");
+        logger.info("partition assigned, begin to consume message, current assign partition:[{}]",
+                consumer.assignment());
         for (TopicPartition topicPartition : partitions) {
             consumer.seek(topicPartition, DbModule.getOffsetFromDb(topicPartition));
         }

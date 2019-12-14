@@ -55,11 +55,11 @@ public class HandleRebalanceConsumer extends Thread {
                  *  kill consumer thread by wakeup consumer
                  */
                 consumer.getConsumer().wakeup();
+                consumer.join();
             } catch (InterruptedException ex) {
                 logger.info("consumer[{}] closed", consumer.getName());
             }
         }
-        Thread.currentThread().join();
     }
 
     public Consumer<String, String> getConsumer() {

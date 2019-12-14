@@ -57,6 +57,7 @@ public class HandleRebalanceUsingDbTransactionConsumer extends Thread {
                  *  kill consumer thread by wakeup consumer
                  */
                 consumer.getConsumer().wakeup();
+                consumer.join();
             } catch (InterruptedException ex) {
                 logger.info("consumer[{}] closed", consumer.getName());
             }
