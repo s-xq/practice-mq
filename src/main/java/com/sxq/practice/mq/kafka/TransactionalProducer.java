@@ -41,8 +41,11 @@ public class TransactionalProducer {
                         key,
                         key + "-value");
                 producer.send(producerRecord);
-                logger.info("send [{}] message to topic[{}], key:[{}], value:[{}]",
-                        i, producerRecord.topic(), producerRecord.key(), producerRecord.value());
+                logger.info("topic:[{}], \tpartition:[{}], \tkey:[{}], \tvalue:[{}]",
+                        producerRecord.topic(),
+                        producerRecord.partition(),
+                        producerRecord.key(),
+                        producerRecord.value());
                 try {
                     Thread.sleep(1000);
                 } catch (Throwable throwable) {

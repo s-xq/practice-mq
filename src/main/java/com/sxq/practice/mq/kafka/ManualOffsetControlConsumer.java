@@ -36,13 +36,16 @@ public class ManualOffsetControlConsumer {
         Consumer consumer = new KafkaConsumer<String, String>(properties);
         consumer.subscribe(Arrays.asList(
                 KafkaUtil.topicName(KafkaConstants.ExampleModule.MODULE_SIMPLE),
-                KafkaUtil.topicName(KafkaConstants.ExampleModule.MODULE_IDEMPOTENCE)));
+                KafkaUtil.topicName(KafkaConstants.ExampleModule.MODULE_IDEMPOTENCE),
+                KafkaUtil.topicName(KafkaConstants.ExampleModule.MODULE_TRANSACTIONAL)));
         final int miniBatchSize = 49;
         List<ConsumerRecord<String, String>> buffer = new ArrayList<>();
         while (true) {
             ConsumerRecords<String, String> consumerRecords = consumer.poll(Duration.ofMillis(10));
             for (ConsumerRecord consumerRecord : consumerRecords) {
-                logger.info("Offset:[{}], key:[{}], value:[{}]",
+                logger.info("topic:[{}], \tpartition:[{}], \toffset:[{}], \tkey:[{}], \tvalue:[{}]",
+                        consumerRecord.topic(),
+                        consumerRecord.partition(),
                         consumerRecord.offset(),
                         consumerRecord.key(),
                         consumerRecord.value());

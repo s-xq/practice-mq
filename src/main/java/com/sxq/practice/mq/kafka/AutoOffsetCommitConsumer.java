@@ -9,7 +9,6 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,11 +33,14 @@ public class AutoOffsetCommitConsumer {
         Consumer<String, String> consumer = new KafkaConsumer(properties);
         consumer.subscribe(Arrays.asList(
                 KafkaUtil.topicName(KafkaConstants.ExampleModule.MODULE_SIMPLE),
-                KafkaUtil.topicName(KafkaConstants.ExampleModule.MODULE_IDEMPOTENCE)));
+                KafkaUtil.topicName(KafkaConstants.ExampleModule.MODULE_IDEMPOTENCE),
+                KafkaUtil.topicName(KafkaConstants.ExampleModule.MODULE_TRANSACTIONAL)));
         while (true) {
             ConsumerRecords<String, String> consumerRecords = consumer.poll(Duration.ofMillis(100));
             for (ConsumerRecord consumerRecord : consumerRecords) {
-                logger.info("Offset:[{}], key:[{}], value:[{}]",
+                logger.info("topic:[{}], \tpartition:[{}], \toffset:[{}], \tkey:[{}], \tvalue:[{}]",
+                        consumerRecord.topic(),
+                        consumerRecord.partition(),
                         consumerRecord.offset(),
                         consumerRecord.key(),
                         consumerRecord.value());
