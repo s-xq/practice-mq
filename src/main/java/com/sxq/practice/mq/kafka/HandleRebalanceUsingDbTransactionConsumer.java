@@ -2,9 +2,7 @@ package com.sxq.practice.mq.kafka;
 
 import java.time.Duration;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -12,8 +10,6 @@ import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.consumer.OffsetAndMetadata;
-import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.slf4j.Logger;
@@ -25,13 +21,13 @@ import com.sxq.practice.mq.Constants;
  * Created by s-xq on 2019-12-12.
  */
 
-public class HandleRebalanceConsumer extends Thread {
+public class HandleRebalanceUsingDbTransactionConsumer extends Thread {
 
     private static final Logger logger = LoggerFactory.getLogger(Constants.LogName.KAFKA);
 
     private static AtomicLong instanceNum = new AtomicLong(0);
 
-    public HandleRebalanceConsumer() {
+    public HandleRebalanceUsingDbTransactionConsumer() {
         super(String.format("HandleRebalanceConsumer-%d", instanceNum.incrementAndGet()));
     }
 
@@ -41,12 +37,14 @@ public class HandleRebalanceConsumer extends Thread {
     }
 
     public static void main(String[] args) throws InterruptedException {
-        List<HandleRebalanceConsumer> consumers = Arrays.asList(new HandleRebalanceConsumer(),
-                new HandleRebalanceConsumer(), new HandleRebalanceConsumer());
-        for (HandleRebalanceConsumer consumer : consumers) {
+        List<HandleRebalanceUsingDbTransactionConsumer> consumers =
+                Arrays.asList(new HandleRebalanceUsingDbTransactionConsumer(),
+                        new HandleRebalanceUsingDbTransactionConsumer(),
+                        new HandleRebalanceUsingDbTransactionConsumer());
+        for (HandleRebalanceUsingDbTransactionConsumer consumer : consumers) {
             consumer.start();
         }
-        for (HandleRebalanceConsumer consumer : consumers) {
+        for (HandleRebalanceUsingDbTransactionConsumer consumer : consumers) {
             try {
                 Thread.sleep(15000);
                 consumer.interrupt();
@@ -63,21 +61,24 @@ public class HandleRebalanceConsumer extends Thread {
         properties.put("key.deserializer", StringDeserializer.class.getCanonicalName());
         properties.put("value.deserializer", StringDeserializer.class.getCanonicalName());
         Consumer<String, String> consumer = new KafkaConsumer(properties);
-        Map<TopicPartition, OffsetAndMetadata> currentOffset = new HashMap<>();
+        HandleRebalanceUsingDbTransaction handleRebalanceUsingDbTransaction =
+                new HandleRebalanceUsingDbTransaction(consumer);
         consumer.subscribe(Arrays.asList(
                 KafkaUtil.topicName(KafkaConstants.ExampleModule.MODULE_SIMPLE),
                 KafkaUtil.topicName(KafkaConstants.ExampleModule.MODULE_IDEMPOTENCE),
                 KafkaUtil.topicName(KafkaConstants.ExampleModule.MODULE_TRANSACTIONAL)),
-                new HandleRebalance(currentOffset, consumer));
+                handleRebalanceUsingDbTransaction);
         try {
             while (true) {
                 ConsumerRecords<String, String> consumerRecords = consumer.poll(Duration.ofMillis(100));
                 for (ConsumerRecord consumerRecord : consumerRecords) {
                     new ConsumerRecordProcessor(consumerRecord).process();
-                    currentOffset.put(new TopicPartition(consumerRecord.topic(), consumerRecord.partition()),
-                            new OffsetAndMetadata(consumerRecord.offset() + 1, "no metadata"));
+                    DbModule.storeRecordInDb(consumerRecord);
+                    DbModule.storeOffsetInDb(consumerRecord.topic(),
+                            consumerRecord.partition(),
+                            consumerRecord.offset());
                 }
-                consumer.commitAsync(currentOffset, null);
+                DbModule.commitDbTransaction();
             }
         } catch (WakeupException ex) {
             logger.error("consumer closing");
@@ -85,17 +86,12 @@ public class HandleRebalanceConsumer extends Thread {
             //            logger.error(ExceptionUtils.getStackTrace(ex));
         } finally {
             try {
-                consumer.commitSync(currentOffset);
+                consumer.close();
             } catch (Exception ex) {
                 //                logger.error(ExceptionUtils.getStackTrace(ex));
-            } finally {
-                try {
-                    consumer.close();
-                } catch (Exception ex) {
-                    //                logger.error(ExceptionUtils.getStackTrace(ex));
-                }
-                logger.info("consumer closed");
             }
+            logger.info("consumer closed");
         }
     }
+
 }
