@@ -27,6 +27,8 @@ public class HandleRebalanceUsingDbTransactionConsumer extends Thread {
 
     private static AtomicLong instanceNum = new AtomicLong(0);
 
+    private Consumer<String, String> consumer;
+
     public HandleRebalanceUsingDbTransactionConsumer() {
         super(String.format("HandleRebalanceConsumer-%d", instanceNum.incrementAndGet()));
     }
@@ -34,6 +36,10 @@ public class HandleRebalanceUsingDbTransactionConsumer extends Thread {
     @Override
     public void run() {
         launchConsumer();
+    }
+
+    public Consumer<String, String> getConsumer() {
+        return consumer;
     }
 
     public static void main(String[] args) throws InterruptedException {
@@ -47,11 +53,15 @@ public class HandleRebalanceUsingDbTransactionConsumer extends Thread {
         for (HandleRebalanceUsingDbTransactionConsumer consumer : consumers) {
             try {
                 Thread.sleep(15000);
-                consumer.interrupt();
+                /**
+                 *  kill consumer thread by wakeup consumer
+                 */
+                consumer.getConsumer().wakeup();
             } catch (InterruptedException ex) {
                 logger.info("consumer[{}] closed", consumer.getName());
             }
         }
+        Thread.currentThread().join();
     }
 
     private void launchConsumer() {
@@ -60,7 +70,7 @@ public class HandleRebalanceUsingDbTransactionConsumer extends Thread {
         properties.put("group.id", KafkaUtil.consumerGroupName(KafkaConstants.ExampleModule.MODULE_HANDLE_REBALANCE));
         properties.put("key.deserializer", StringDeserializer.class.getCanonicalName());
         properties.put("value.deserializer", StringDeserializer.class.getCanonicalName());
-        Consumer<String, String> consumer = new KafkaConsumer(properties);
+        consumer = new KafkaConsumer(properties);
         HandleRebalanceUsingDbTransaction handleRebalanceUsingDbTransaction =
                 new HandleRebalanceUsingDbTransaction(consumer);
         consumer.subscribe(Arrays.asList(
@@ -81,7 +91,7 @@ public class HandleRebalanceUsingDbTransactionConsumer extends Thread {
                 DbModule.commitDbTransaction();
             }
         } catch (WakeupException ex) {
-            logger.error("consumer closing");
+            logger.info("consumer wakeup, closing");
         } catch (Exception ex) {
             //            logger.error(ExceptionUtils.getStackTrace(ex));
         } finally {

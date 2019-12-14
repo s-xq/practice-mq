@@ -31,6 +31,8 @@ public class HandleRebalanceConsumer extends Thread {
 
     private static AtomicLong instanceNum = new AtomicLong(0);
 
+    private Consumer<String, String> consumer;
+
     public HandleRebalanceConsumer() {
         super(String.format("HandleRebalanceConsumer-%d", instanceNum.incrementAndGet()));
     }
@@ -49,11 +51,19 @@ public class HandleRebalanceConsumer extends Thread {
         for (HandleRebalanceConsumer consumer : consumers) {
             try {
                 Thread.sleep(15000);
-                consumer.interrupt();
+                /**
+                 *  kill consumer thread by wakeup consumer
+                 */
+                consumer.getConsumer().wakeup();
             } catch (InterruptedException ex) {
                 logger.info("consumer[{}] closed", consumer.getName());
             }
         }
+        Thread.currentThread().join();
+    }
+
+    public Consumer<String, String> getConsumer() {
+        return consumer;
     }
 
     private void launchConsumer() {
@@ -62,7 +72,7 @@ public class HandleRebalanceConsumer extends Thread {
         properties.put("group.id", KafkaUtil.consumerGroupName(KafkaConstants.ExampleModule.MODULE_HANDLE_REBALANCE));
         properties.put("key.deserializer", StringDeserializer.class.getCanonicalName());
         properties.put("value.deserializer", StringDeserializer.class.getCanonicalName());
-        Consumer<String, String> consumer = new KafkaConsumer(properties);
+        consumer = new KafkaConsumer(properties);
         Map<TopicPartition, OffsetAndMetadata> currentOffset = new HashMap<>();
         consumer.subscribe(Arrays.asList(
                 KafkaUtil.topicName(KafkaConstants.ExampleModule.MODULE_SIMPLE),
@@ -80,7 +90,7 @@ public class HandleRebalanceConsumer extends Thread {
                 consumer.commitAsync(currentOffset, null);
             }
         } catch (WakeupException ex) {
-            logger.error("consumer closing");
+            logger.info("consumer wakeup, closing");
         } catch (Exception ex) {
             //            logger.error(ExceptionUtils.getStackTrace(ex));
         } finally {
