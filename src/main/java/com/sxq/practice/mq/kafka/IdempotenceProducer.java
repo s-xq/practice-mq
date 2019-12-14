@@ -2,6 +2,7 @@ package com.sxq.practice.mq.kafka;
 
 import java.util.Properties;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -27,11 +28,20 @@ public class IdempotenceProducer {
         properties.put("value.serializer", StringSerializer.class.getCanonicalName());
         properties.put("enable.idempotence", true);
         Producer producer = new KafkaProducer<String, String>(properties);
-        for (int i = 0; i < 100; i++) {
-            producer.send(new ProducerRecord(
+        for (int i = 0; i < 10000; i++) {
+            String key = System.currentTimeMillis() + "-" + i;
+            ProducerRecord<String, String> producerRecord = new ProducerRecord<>(
                     KafkaUtil.topicName(KafkaConstants.ExampleModule.MODULE_IDEMPOTENCE),
-                    Integer.toString(i),
-                    Integer.toString(i)));
+                    key,
+                    key + "-value");
+            producer.send(producerRecord);
+            logger.info("send [{}] message to topic[{}], key:[{}], value:[{}]",
+                    i, producerRecord.topic(), producerRecord.key(), producerRecord.value());
+            try {
+                Thread.sleep(1000);
+            } catch (Throwable throwable) {
+                logger.info(ExceptionUtils.getStackTrace(throwable));
+            }
         }
         producer.close();
     }

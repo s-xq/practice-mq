@@ -34,11 +34,20 @@ public class TransactionalProducer {
         producer.initTransactions();
         try {
             producer.beginTransaction();
-            for (int i = 0; i < 100; i++) {
-                producer.send(new ProducerRecord(
+            for (int i = 0; i < 10000; i++) {
+                String key = System.currentTimeMillis() + "-" + i;
+                ProducerRecord<String, String> producerRecord = new ProducerRecord<>(
                         KafkaUtil.topicName(KafkaConstants.ExampleModule.MODULE_TRANSACTIONAL),
-                        Integer.toString(i),
-                        Integer.toString(i)));
+                        key,
+                        key + "-value");
+                producer.send(producerRecord);
+                logger.info("send [{}] message to topic[{}], key:[{}], value:[{}]",
+                        i, producerRecord.topic(), producerRecord.key(), producerRecord.value());
+                try {
+                    Thread.sleep(1000);
+                } catch (Throwable throwable) {
+                    logger.info(ExceptionUtils.getStackTrace(throwable));
+                }
             }
             producer.commitTransaction();
         } catch (ProducerFencedException | OutOfOrderSequenceException | AuthorizationException ex) {
