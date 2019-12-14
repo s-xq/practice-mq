@@ -3,10 +3,11 @@ package com.sxq.practice.mq.kafka;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicLong;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -24,11 +25,38 @@ import com.sxq.practice.mq.Constants;
  * Created by s-xq on 2019-12-12.
  */
 
-public class HandleRebalanceConsumer {
+public class HandleRebalanceConsumer extends Thread {
 
     private static final Logger logger = LoggerFactory.getLogger(Constants.LogName.KAFKA);
 
-    public static void main(String[] args) {
+    private static AtomicLong instanceNum = new AtomicLong(0);
+
+    public HandleRebalanceConsumer() {
+        super(String.format("HandleRebalanceConsumer-%d", instanceNum.incrementAndGet()));
+    }
+
+    @Override
+    public void run() {
+        launchConsumer();
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        List<HandleRebalanceConsumer> consumers = Arrays.asList(new HandleRebalanceConsumer(),
+                new HandleRebalanceConsumer(), new HandleRebalanceConsumer());
+        for (HandleRebalanceConsumer consumer : consumers) {
+            consumer.start();
+        }
+        for (HandleRebalanceConsumer consumer : consumers) {
+            try {
+                Thread.sleep(15000);
+                consumer.interrupt();
+            } catch (InterruptedException ex) {
+                logger.info("consumer[{}] closed", consumer.getName());
+            }
+        }
+    }
+
+    private void launchConsumer() {
         Properties properties = new Properties();
         properties.put("bootstrap.servers", KafkaConstants.BOOTSTRAP_SERVERS);
         properties.put("group.id", KafkaUtil.consumerGroupName(KafkaConstants.ExampleModule.MODULE_HANDLE_REBALANCE));
@@ -51,20 +79,26 @@ public class HandleRebalanceConsumer {
                             consumerRecord.offset(),
                             consumerRecord.key(),
                             consumerRecord.value());
+                    currentOffset.put(new TopicPartition(consumerRecord.topic(), consumerRecord.partition()),
+                            new OffsetAndMetadata(consumerRecord.offset() + 1, "no metadata"));
                 }
                 consumer.commitAsync(currentOffset, null);
             }
         } catch (WakeupException ex) {
             logger.error("consumer closing");
         } catch (Exception ex) {
-            logger.error(ExceptionUtils.getStackTrace(ex));
+            //            logger.error(ExceptionUtils.getStackTrace(ex));
         } finally {
             try {
                 consumer.commitSync(currentOffset);
             } catch (Exception ex) {
-                logger.error(ExceptionUtils.getStackTrace(ex));
+                //                logger.error(ExceptionUtils.getStackTrace(ex));
             } finally {
-                consumer.close();
+                try {
+                    consumer.close();
+                } catch (Exception ex) {
+                    //                logger.error(ExceptionUtils.getStackTrace(ex));
+                }
                 logger.info("consumer closed");
             }
         }

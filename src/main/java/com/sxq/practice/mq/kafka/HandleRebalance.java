@@ -32,7 +32,7 @@ public class HandleRebalance implements ConsumerRebalanceListener {
 
     @Override
     public void onPartitionsRevoked(Collection<TopicPartition> partitions) {
-
+        logger.info("partition assigned, begin to consume message, currentOffsets:[{}]", currentOffsets.toString());
     }
 
     @Override
@@ -40,7 +40,7 @@ public class HandleRebalance implements ConsumerRebalanceListener {
         /**
          * commit offset before partition reassigned
          */
-        logger.info("Lost partitions in rebalance. Committing offsets:[{}]", currentOffsets);
+        logger.info("Lost partitions in rebalance. Committing offsets:[{}]", currentOffsets.toString());
         consumer.commitSync(currentOffsets);
     }
 }
