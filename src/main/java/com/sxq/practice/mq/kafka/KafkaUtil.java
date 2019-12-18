@@ -13,4 +13,16 @@ public class KafkaUtil {
     public static String consumerGroupName(String moduleName) {
         return "ConsumerGroupNameTest-" + moduleName;
     }
+
+    public static String stateStore(String moduleName) {
+        return "StateStoreNameTest-" + moduleName;
+    }
+
+    public static String streamInputTopicName(String moduleName) {
+        return topicName(moduleName) + "-Input";
+    }
+
+    public static String streamOutputTopicName(String moduleName) {
+        return topicName(moduleName) + "-Output";
+    }
 }

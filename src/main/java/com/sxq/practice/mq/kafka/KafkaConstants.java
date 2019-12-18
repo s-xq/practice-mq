@@ -2,6 +2,7 @@ package com.sxq.practice.mq.kafka;
 
 import com.sxq.practice.mq.kafka.rebalance.HandleRebalanceConsumer;
 import com.sxq.practice.mq.kafka.rebalance.HandleRebalanceUsingDbTransaction;
+import com.sxq.practice.mq.kafka.stream.WordCountApplication;
 
 /**
  * Created by s-xq on 2019-12-12.
@@ -20,6 +21,7 @@ public class KafkaConstants {
         public static final String MODULE_HANDLE_REBALANCE = HandleRebalanceConsumer.class.getSimpleName();
         public static final String MODULE_HANDLE_REBALANCE_UNSING_DB_TRANSACTION
                 = HandleRebalanceUsingDbTransaction.class.getSimpleName();
+        public static final String MODULE_STREAM_WORD_COUNT = WordCountApplication.class.getSimpleName();
 
     }
 

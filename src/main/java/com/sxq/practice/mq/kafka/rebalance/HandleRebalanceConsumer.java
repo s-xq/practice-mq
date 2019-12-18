@@ -49,14 +49,14 @@ public class HandleRebalanceConsumer extends Thread {
     public static void main(String[] args) throws InterruptedException {
 
         List<HandleRebalanceConsumer> consumers = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 100; i++) {
             HandleRebalanceConsumer handleRebalanceConsumer = new HandleRebalanceConsumer();
             consumers.add(handleRebalanceConsumer);
             handleRebalanceConsumer.start();
         }
         for (HandleRebalanceConsumer consumer : consumers) {
             try {
-                Thread.sleep(15000);
+                Thread.sleep(90000);
                 /**
                  *  kill consumer thread by wakeup consumer
                  */
@@ -81,9 +81,7 @@ public class HandleRebalanceConsumer extends Thread {
         consumer = new KafkaConsumer(properties);
         Map<TopicPartition, OffsetAndMetadata> currentOffset = new HashMap<>();
         consumer.subscribe(Arrays.asList(
-                KafkaUtil.topicName(KafkaConstants.ExampleModule.MODULE_SIMPLE),
-                KafkaUtil.topicName(KafkaConstants.ExampleModule.MODULE_IDEMPOTENCE),
-                KafkaUtil.topicName(KafkaConstants.ExampleModule.MODULE_TRANSACTIONAL)),
+                KafkaUtil.topicName(KafkaConstants.ExampleModule.MODULE_SIMPLE)),
                 new HandleRebalance(currentOffset, consumer));
         try {
             while (true) {
