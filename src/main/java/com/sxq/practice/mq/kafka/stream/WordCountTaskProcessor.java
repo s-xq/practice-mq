@@ -23,15 +23,16 @@ import com.sxq.practice.mq.kafka.KafkaUtil;
 
 /**
  * Created by s-xq on 2019-12-18.
+ * {@link https://kafka.apache.org/24/documentation/streams/tutorial}
  */
 
-public class WordCountApplication {
+public class WordCountTaskProcessor {
 
     private static final Logger logger = LoggerFactory.getLogger(Constants.LogName.KAFKA);
 
     public static void main(String[] args) {
         Properties props = new Properties();
-        props.put(StreamsConfig.APPLICATION_ID_CONFIG, WordCountApplication.class.getSimpleName());
+        props.put(StreamsConfig.APPLICATION_ID_CONFIG, WordCountTaskProcessor.class.getSimpleName());
         props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, KafkaConstants.BOOTSTRAP_SERVERS);
         props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
         props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
@@ -47,7 +48,7 @@ public class WordCountApplication {
         wordCounts.toStream().to(KafkaUtil.streamInputTopicName(KafkaConstants.ExampleModule.MODULE_STREAM_WORD_COUNT),
                 Produced.with(Serdes.String(), Serdes.Long()));
         Topology topology = builder.build();
-        logger.info("topology:[{}]", topology);
+        logger.info("topology:[{}]", topology.describe());
         KafkaStreams streams = new KafkaStreams(topology, props);
         streams.start();
     }
