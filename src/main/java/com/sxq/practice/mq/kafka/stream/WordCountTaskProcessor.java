@@ -45,7 +45,7 @@ public class WordCountTaskProcessor {
                 .groupBy((key, word) -> word)
                 .count(Materialized.<String, Long, KeyValueStore<Bytes, byte[]>>as(KafkaUtil.stateStore(
                         KafkaConstants.ExampleModule.MODULE_STREAM_WORD_COUNT)));
-        wordCounts.toStream().to(KafkaUtil.streamInputTopicName(KafkaConstants.ExampleModule.MODULE_STREAM_WORD_COUNT),
+        wordCounts.toStream().to(KafkaUtil.streamOutputTopicName(KafkaConstants.ExampleModule.MODULE_STREAM_WORD_COUNT),
                 Produced.with(Serdes.String(), Serdes.Long()));
         Topology topology = builder.build();
         logger.info("topology:[{}]", topology.describe());

@@ -8,6 +8,7 @@ import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.serialization.LongDeserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +32,7 @@ public class WordCountConsumer {
         properties.put("enable.auto.commit", true);
         properties.put("auto.commit.interval.ms", 1000);
         properties.put("key.deserializer", StringDeserializer.class.getCanonicalName());
-        properties.put("value.deserializer", StringDeserializer.class.getCanonicalName());
+        properties.put("value.deserializer", LongDeserializer.class.getCanonicalName());
         Consumer<String, String> consumer = new KafkaConsumer(properties);
         consumer.subscribe(Arrays.asList(
                 KafkaUtil.streamOutputTopicName(KafkaConstants.ExampleModule.MODULE_STREAM_WORD_COUNT)));
